@@ -1,0 +1,78 @@
+import java.util.*;
+
+public class BuilderReportDemo {
+
+    static class ReportStyle {
+        String backgroundColor;
+        String fontColor;
+        int fontSize;
+
+        public ReportStyle(String bg, String fc, int fs) {
+            backgroundColor = bg;
+            fontColor = fc;
+            fontSize = fs;
+        }
+    }
+
+    static class Report {
+        String header;
+        String content;
+        String footer;
+        List<String> sections = new ArrayList<>();
+        ReportStyle style;
+
+        public void export() {
+            System.out.println("Header: " + header);
+            System.out.println("Content: " + content);
+            for (String s : sections)
+                System.out.println("Section: " + s);
+            System.out.println("Footer: " + footer);
+        }
+    }
+
+    interface IReportBuilder {
+        void setHeader(String header);
+        void setContent(String content);
+        void setFooter(String footer);
+        void addSection(String name, String content);
+        void setStyle(ReportStyle style);
+        Report getReport();
+    }
+
+    static class TextReportBuilder implements IReportBuilder {
+
+        private Report report = new Report();
+
+        public void setHeader(String header) { report.header = header; }
+        public void setContent(String content) { report.content = content; }
+        public void setFooter(String footer) { report.footer = footer; }
+        public void addSection(String name, String content) {
+            report.sections.add(name + ": " + content);
+        }
+        public void setStyle(ReportStyle style) { report.style = style; }
+        public Report getReport() { return report; }
+    }
+
+    static class ReportDirector {
+        public void construct(IReportBuilder builder, ReportStyle style) {
+            builder.setStyle(style);
+            builder.setHeader("Sales Report");
+            builder.setContent("Main statistics");
+            builder.addSection("Section 1", "Charts");
+            builder.addSection("Section 2", "Tables");
+            builder.setFooter("Confidential");
+        }
+    }
+
+    public static void main(String[] args) {
+
+        ReportDirector director = new ReportDirector();
+        ReportStyle style = new ReportStyle("white", "black", 12);
+
+        IReportBuilder builder = new TextReportBuilder();
+        director.construct(builder, style);
+
+        Report report = builder.getReport();
+        report.export();
+    }
+}
