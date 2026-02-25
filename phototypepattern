@@ -1,0 +1,94 @@
+import java.util.*;
+
+public class PrototypeGameDemo {
+
+    static class Skill implements Cloneable {
+        String name;
+
+        public Skill(String name) { this.name = name; }
+
+        public Skill clone() {
+            return new Skill(name);
+        }
+
+        public String toString() { return name; }
+    }
+
+    static class Weapon implements Cloneable {
+        String name;
+        int damage;
+
+        public Weapon(String name, int damage) {
+            this.name = name;
+            this.damage = damage;
+        }
+
+        public Weapon clone() {
+            return new Weapon(name, damage);
+        }
+    }
+
+    static class Armor implements Cloneable {
+        String name;
+        int defense;
+
+        public Armor(String name, int defense) {
+            this.name = name;
+            this.defense = defense;
+        }
+
+        public Armor clone() {
+            return new Armor(name, defense);
+        }
+    }
+
+    static class Character implements Cloneable {
+        int health;
+        int strength;
+        Weapon weapon;
+        Armor armor;
+        List<Skill> skills = new ArrayList<>();
+
+        public Character(int health, int strength, Weapon weapon, Armor armor) {
+            this.health = health;
+            this.strength = strength;
+            this.weapon = weapon;
+            this.armor = armor;
+        }
+
+        public void addSkill(Skill skill) {
+            skills.add(skill);
+        }
+
+        public Character clone() {
+            Character clone = new Character(
+                    health,
+                    strength,
+                    weapon.clone(),
+                    armor.clone()
+            );
+            for (Skill s : skills)
+                clone.addSkill(s.clone());
+            return clone;
+        }
+
+        public void show() {
+            System.out.println("HP: " + health + " STR: " + strength);
+            System.out.println("Skills: " + skills);
+        }
+    }
+
+    public static void main(String[] args) {
+
+        Weapon sword = new Weapon("Sword", 50);
+        Armor armor = new Armor("Steel Armor", 30);
+
+        Character warrior = new Character(100, 20, sword, armor);
+        warrior.addSkill(new Skill("Slash"));
+        warrior.addSkill(new Skill("Block"));
+
+        Character clone = warrior.clone();
+
+        clone.show();
+    }
+}
